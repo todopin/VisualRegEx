@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:52387",
+      "applicationUrl": "http://localhost:52387/VisualRegEx",
       "sslPort": 44398
     }
   },
@@ -16,7 +16,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "CheckRegEx": {
+    "VisualRegEx": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,
