@@ -1,32 +1,110 @@
 ﻿@using System.Text.RegularExpressions
 
-<h1>Regex.Matches</h1>
+<h1>System.Text.RegularExpressions.RegEx</h1>
 
-<p>input</p>
+<div class="wrapper">
 
-<p><input type="text" @bind="input" /></p>
+    <div class="row ">
+        <select @bind="@commandName">
+        @foreach (var target in targets)
+        {
+            <option value="@target.DisplayName">@target.DisplayName</option>
+        }
+        </select>
+        <p></p>
+        @foreach (var option in options)
+        {
+            <input type="checkbox" @onchange="e => Change(option, e.Value)" />@option<br />
+        }
+    </div>
 
-<p>pattern</p>
+    <div class="row ">
 
-<p><input type="text" @bind="pattern" /></p>
+        <p>input</p>
+        <p><textarea rows="4" cols="40" @bind="input" /></p>
 
-<p>result</p>
+        <p>pattern</p>
+        <p><input type="text" @bind="pattern" /></p>
 
-<p><input type="text" @bind="result" /></p>
+        <p>replacement</p>
+        <p><input type="text" @bind="replacement" /></p>
 
-<button class="btn btn-primary" @onclick="Run">Click me</button>
+        <button class="btn btn-primary" @onclick="Run">Click me</button>
+
+        <p>result</p>
+        <p><textarea rows="4" cols="40" @bind="anser" /></p>
+    </div>
+</div>
 
 @code {
+    private Array options = Enum.GetValues(typeof(RegexOptions));
+
+    private RegexOptions selectedOptions = RegexOptions.None;
+
     private string input = "Who writes these notes?";
 
     private string pattern = "\\b\\w+es\\b";
 
-    private string result;
+    private string replacement = "";
+
+    private string anser;
+
+    public class Command
+    {
+        public string DisplayName { get; set; }
+
+        public Func<string, string, string, RegexOptions, object> Function { get; set; }
+    }
+
+    private Command[] targets = new[]
+    {
+        new Command() { DisplayName = nameof(Regex.Match),
+            Function = (input, pattern, _, option) => Regex.Match(input, pattern, option) },
+        new Command() { DisplayName = nameof(Regex.Matches),
+            Function = (input, pattern, _, option) => Regex.Matches(input, pattern, option) },
+        new Command() { DisplayName = nameof(Regex.Replace),
+            Function = (input, pattern, replacement, option) => Regex.Replace(input,　pattern, replacement, option) },
+        new Command() { DisplayName = nameof(Regex.Split),
+            Function = (input, pattern, _, option) => Regex.Split(input, pattern, option) }
+    };
+
+    private string commandName = nameof(Regex.Match);
+
+    private void Change(object option, object value)
+    {
+        if ((bool)value == true)
+        {
+            selectedOptions |= (RegexOptions)option;
+        }
+        else
+        {
+            selectedOptions &= ~(RegexOptions)option;
+        }
+    }
 
     private void Run()
     {
-        var matches = Regex.Matches(input, pattern);
+        var commnad = targets.FirstOrDefault(t => t.DisplayName == commandName);
+    
+        var result = commnad.Function(input, pattern, replacement, selectedOptions);
 
-        result = string.Join(", ", matches);
+        switch (result)
+        {
+            case Match match:
+                anser = match.Value;
+                break;
+
+            case MatchCollection matches:
+                anser = matches.Any() ? string.Join(", ", matches) : string.Empty;
+                break;
+
+            case string text:
+                anser = text;
+                break;
+
+            case string[] array:
+                anser = array.Any() ? string.Join(", ", array) : string.Empty;
+                break;
+        }
     }
 }
