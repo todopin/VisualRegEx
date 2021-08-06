@@ -1,0 +1,32 @@
+﻿@using System.Text.RegularExpressions
+
+<h1>Regex.Matches</h1>
+
+<p>input</p>
+
+<p><input type="text" @bind="input" /></p>
+
+<p>pattern</p>
+
+<p><input type="text" @bind="pattern" /></p>
+
+<p>result</p>
+
+<p><input type="text" @bind="result" /></p>
+
+<button class="btn btn-primary" @onclick="Run">Click me</button>
+
+@code {
+    private string input = "Who writes these notes?";
+
+    private string pattern = "\\b\\w+es\\b";
+
+    private string result;
+
+    private void Run()
+    {
+        var matches = Regex.Matches(input, pattern);
+
+        result = string.Join(", ", matches);
+    }
+}
