@@ -95,7 +95,7 @@
                 break;
 
             case MatchCollection matches:
-                anser = string.Join(", ", matches.Cast<Match>().Select(match => $"({string.Join(", ", match.Groups)})"));
+                anser = string.Join(", ", matches.Cast<Match>().Select(match => (match.Groups.Count == 1) ? $"{match.Groups[0]}" : $"({string.Join(", ", match.Groups.Cast<Group>().Skip(1))})"));
                 break;
 
             case string text:
