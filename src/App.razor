@@ -95,7 +95,7 @@
                 break;
 
             case MatchCollection matches:
-                anser = matches.Any() ? string.Join(", ", matches) : string.Empty;
+                anser = string.Join(", ", matches.Cast<Match>().Select(match => $"({string.Join(", ", match.Groups)})"));
                 break;
 
             case string text:
